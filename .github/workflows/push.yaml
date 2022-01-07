@@ -50,6 +50,6 @@ jobs:
         with:
           node-version: 16
       - run: npm i -g semantic-release@18
-      - with:
+      - env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: semantic-release
