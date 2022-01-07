@@ -52,4 +52,4 @@ jobs:
       - run: npm i -g semantic-release@18
       - env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: semantic-release --dry-run
+        run: semantic-release
