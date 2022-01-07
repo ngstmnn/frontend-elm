@@ -42,7 +42,7 @@ jobs:
 
   tag-new-release:
     needs: build
-    #if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
