@@ -8,3 +8,5 @@ updates:
       timezone: "Europe/Berlin"
     assignees:
       - "ngstmnn"
+    commit-message:
+      prefix: "fix(deps):"
