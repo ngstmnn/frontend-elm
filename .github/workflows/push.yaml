@@ -8,9 +8,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
-      - uses: jorelali/setup-elm@v3
-        with:
-          elm-version: 0.19.1
       - run: npm i -g elm-format
       - run: elm-format ./src --validate
 
@@ -24,8 +21,7 @@ jobs:
       - uses: jorelali/setup-elm@v3
         with:
           elm-version: 0.19.1
-      - run: npm i -g elm-test
-      - run: elm-test
+      - uses: ./.github/actions/run-elm-test
 
   build:
     needs: [validate-format, test]
