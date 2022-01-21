@@ -1,7 +1,7 @@
 name: run-elm-test
 description: |
   Installs and runs elm-test. It requires the repository to be
-  checked out and node to be installed.
+  checked out and node and elm to be installed.
 runs:
   using: "composite"
   steps:

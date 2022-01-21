@@ -1,0 +1,19 @@
+name: run-elm-format
+description: |
+  Installs and runs elm-format. It requires the repository to be
+  checked out and node to be installed.
+inputs:
+  directory:
+    description: The directory containing the files to be validated
+    default: ./src
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - id: install
+      run: npm i -g elm-format
+      shell: bash
+    - id: run
+      run: elm-format ${{ inputs.directory }} --validate
+      shell: bash
+
