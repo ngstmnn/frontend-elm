@@ -82,7 +82,7 @@ initCurrentPage ( model, existingCmds ) =
 
 view : Model -> Document Msg
 view model =
-    { title = "eCCspensemanager Elm"
+    { title = "Expensemanager Elm"
     , body =
         [ div []
             [ menu model
@@ -97,7 +97,7 @@ menu model =
     Navbar.config NavMsg
         |> Navbar.withAnimation
         |> Navbar.container
-        |> Navbar.brand [ href "#" ] [ text "eCCspensemanager" ]
+        |> Navbar.brand [ href "#" ] [ text "Expensemanager" ]
         |> Navbar.items
             [ Navbar.itemLink [ href "#accounts" ] [ text "Accounts" ]
             ]
