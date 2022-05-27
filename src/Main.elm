@@ -1,13 +1,10 @@
 module Main exposing (main)
 
-import Bootstrap.Grid as Grid
-import Bootstrap.Navbar as Navbar
 import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (href)
-import Pages.Accounts as AccountsPage
-import Pages.NotFound as NotFoundPage
+import Material.IconButton as IconButton
+import Material.TopAppBar as TopAppBar
 import Route exposing (Route(..), parseUrl)
 import Url exposing (Url)
 
@@ -23,19 +20,16 @@ main =
         , onUrlChange = UrlChanged
         }
 
-
 type alias Model =
     { route : Route
     , page : Page
     , navKey : Nav.Key
-    , navState : Navbar.State
     }
 
 
 type Msg
     = LinkClicked UrlRequest
     | UrlChanged Url
-    | NavMsg Navbar.State
 
 
 type Page
@@ -45,20 +39,16 @@ type Page
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Navbar.subscriptions model.navState NavMsg
+    Sub.none
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url navKey =
     let
-        ( navState, navCmd ) =
-            Navbar.initialState NavMsg
-
         model =
             { route = parseUrl url
             , page = NotFoundPage
             , navKey = navKey
-            , navState = navState
             }
     in
     initCurrentPage ( model, Cmd.none )
@@ -84,41 +74,29 @@ view : Model -> Document Msg
 view model =
     { title = "Expensemanager Elm"
     , body =
-        [ div []
-            [ menu model
-            , currentView model
+        [ TopAppBar.regular TopAppBar.config
+                  [ TopAppBar.row []
+                      [ TopAppBar.section [ TopAppBar.alignStart ]
+                          [ IconButton.iconButton
+                              (IconButton.config
+                                  |> IconButton.setAttributes
+                                      [ TopAppBar.navigationIcon ]
+                              )
+                              (IconButton.icon "menu")
+                          , Html.span [ TopAppBar.title ]
+                              [ text "Title" ]
+                          ]
+                      ]
+                  ]
             ]
-        ]
+
     }
-
-
-menu : Model -> Html Msg
-menu model =
-    Navbar.config NavMsg
-        |> Navbar.withAnimation
-        |> Navbar.container
-        |> Navbar.brand [ href "#" ] [ text "Expensemanager" ]
-        |> Navbar.items
-            [ Navbar.itemLink [ href "#accounts" ] [ text "Accounts" ]
-            ]
-        |> Navbar.view model.navState
-
-
-currentView : Model -> Html Msg
-currentView model =
-    Grid.container [] <|
-        case model.page of
-            NotFoundPage ->
-                NotFoundPage.view
-
-            AccountsPage ->
-                AccountsPage.view
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case ( msg, model.page ) of
-        ( LinkClicked urlRequest, _ ) ->
+    case msg of
+        LinkClicked urlRequest ->
             case urlRequest of
                 Browser.Internal url ->
                     ( model
@@ -130,13 +108,10 @@ update msg model =
                     , Nav.load url
                     )
 
-        ( UrlChanged url, _ ) ->
+        UrlChanged url ->
             let
                 newRoute =
                     Route.parseUrl url
             in
             ( { model | route = newRoute }, Cmd.none )
                 |> initCurrentPage
-
-        ( NavMsg state, _ ) ->
-            ( { model | navState = state }, Cmd.none )
