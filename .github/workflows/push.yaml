@@ -26,11 +26,19 @@ jobs:
     needs: [validate-format, test]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: jorelali/setup-elm@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install elm
+        uses: jorelali/setup-elm@v3
         with:
           elm-version: 0.19.1
-      - run: elm make ./src/Main.elm --optimize --output elm.js
+      - name: Build application
+        run: elm make ./src/Main.elm --optimize --output elm.js
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: elm-js
+          path: ./elm.js
 
   tag-new-release:
     needs: build
@@ -45,3 +53,18 @@ jobs:
       - env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: semantic-release
+
+  build-and-push-container-image:
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: elm-json
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
