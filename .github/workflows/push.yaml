@@ -61,7 +61,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: elm-json
+          name: elm-js
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
