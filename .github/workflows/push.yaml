@@ -80,4 +80,4 @@ jobs:
           file: ./docker/Dockerfile
           context: .
           push: true
-          tags: user/app:latest
+          tags: ngstmnn/expensemanager-elm:latest
