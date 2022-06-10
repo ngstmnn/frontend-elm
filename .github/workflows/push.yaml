@@ -42,17 +42,15 @@ jobs:
 
   tag-new-release:
     needs: build
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v2
+      - uses: go-semantic-release/action@v1
+        id: semanticRelease
         with:
-          node-version: 16
-      - run: npm i -g semantic-release@18
-      - env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          changelog-generator-opt: "emojis=true"
+          dry: ${{github.ref != 'refs/heads/main'}}
 
   build-and-push-container-image:
     needs: build
@@ -80,4 +78,6 @@ jobs:
           file: ./docker/Dockerfile
           context: .
           push: true
-          tags: ghcr.io/ngstmnn/expensemanager-elm:latest
+          tags: |
+            ghcr.io/ngstmnn/expensemanager-elm:latest
+            ghcr.io/ngstmnn/expensemanager-elm:${{steps.semanticRelease.outputs.version}}
