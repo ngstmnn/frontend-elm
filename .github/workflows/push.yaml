@@ -42,18 +42,31 @@ jobs:
 
   tag-new-release:
     needs: build
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-20.04
-    outputs:
-      version: ${{steps.semanticRelease.outputs.new_release_version}}
     steps:
-      - uses: actions/checkout@v3
-      - uses: cycjimmy/semantic-release-action@v3
-        id: semanticRelease
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          dry_run: ${{github.ref != 'refs/heads/main'}}
-          branches: chore/add-container-build-to-actions
+          node-version: 16
+      - run: npm i -g semantic-release@18
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: semantic-release
+
+#  tag-new-release:
+#    needs: build
+#    runs-on: ubuntu-20.04
+#    outputs:
+#      version: ${{steps.semanticRelease.outputs.version}}
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: go-semantic-release/action@v1
+#        id: semanticRelease
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          changelog-generator-opt: "emojis=true"
+#          dry: ${{github.ref != 'refs/heads/main'}}
 
   build-and-push-container-image:
     needs: tag-new-release
@@ -83,4 +96,4 @@ jobs:
           push: true
           tags: |
             ghcr.io/ngstmnn/expensemanager-elm:latest
-            ghcr.io/ngstmnn/expensemanager-elm:${{needs.tag-new-release.outputs.version}}
+#            ghcr.io/ngstmnn/expensemanager-elm:${{needs.tag-new-release.outputs.version}}
