@@ -44,15 +44,16 @@ jobs:
     needs: build
     runs-on: ubuntu-20.04
     outputs:
-      version: ${{steps.semanticRelease.outputs.version}}
+      version: ${{steps.semanticRelease.outputs.new_release_version}}
     steps:
       - uses: actions/checkout@v3
-      - uses: go-semantic-release/action@v1
+      - uses: cycjimmy/semantic-release-action@v3
         id: semanticRelease
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           changelog-generator-opt: "emojis=true"
-          dry: ${{github.ref != 'refs/heads/main'}}
+          dry_run: ${{github.ref != 'refs/heads/main'}}
+          branches: .*
 
   build-and-push-container-image:
     needs: tag-new-release
